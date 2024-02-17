@@ -9,6 +9,12 @@ filebeat.inputs:
 output.elasticsearch:
   hosts: ["elasticsearch:9200"]
   index: "casas-%{+yyyy.MM.dd}"
+
+  setup.template.name: "casas"  # Nombre del template del índice
+  setup.template.pattern: "casas-*"  # Patrón de coincidencia del template del índice
+
+output.elasticsearch:
+  hosts: ["elasticsearch:9200"]
   index: "ciudades-%{+yyyy.MM.dd}"
 
 setup.ilm.enabled: false
