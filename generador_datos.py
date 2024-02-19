@@ -29,7 +29,7 @@ def generate_and_write_data():
         os.makedirs(data_folder)
         
     # Escribir los datos en el archivo dummy_data.json
-    with open(os.path.join(data_folder, "dummy_data.json"), "w") as file:
+    with open(os.path.join(data_folder, "dummy_data.json"), "a") as file:
         datos = generate_dummy_data()
         print(datos)
         file.write(datos)
