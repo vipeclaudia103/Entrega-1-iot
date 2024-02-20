@@ -2,20 +2,28 @@ filebeat.inputs:
 - type: log
   enabled: true
   paths:
-    - /data/*.json
+    - /home/cvp/repos/Entrega-1-iot/data/casas_data.json  # Ruta al primer archivo de datos
   fields_under_root: true
   json.keys_under_root: true
+  fields:
+    type: "ciudades"   # Etiqueta para el primer tipo de datos
+
+- type: log
+  enabled: true
+  paths:
+    - /home/cvp/repos/Entrega-1-iot/data/ciudades_data.json   # Ruta al segundo archivo de datos
+  fields_under_root: true
+  json.keys_under_root: true
+  fields:
+    type: "casas"   # Etiqueta para el segundo tipo de datos
 
 output.elasticsearch:
   hosts: ["elasticsearch:9200"]
-  index: "casas-%{+yyyy.MM.dd}"
+  protocol: "https"
+  # username: "cvp"
+  # password: "cvp_2003"
+  index: "%{[type]}-%{+yyyy.MM.dd}"   # Utiliza el campo "type" para diferenciar los índices
 
 setup.ilm.enabled: false
 setup.template.name: "casas"
 setup.template.pattern: "casas-*"
-
-
-# output.elasticsearch:
-#   hosts: ["elasticsearch:9200"]
-#   index: "ciudades-%{+yyyy.MM.dd}"
-
