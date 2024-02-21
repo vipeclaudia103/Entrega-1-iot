@@ -19,8 +19,3 @@ services:
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/run/docker.sock:/var/run/docker.sock
 
-  # python:
-  #   image: python:3.10
-  #   container_name: python
-  #   volumes:
-  #     - ./data:/data
