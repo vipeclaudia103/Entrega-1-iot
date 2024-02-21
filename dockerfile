@@ -1,6 +1,12 @@
 # Usa la imagen base de Python 3.10
 FROM python:3.10
 
+# Copiar el archivo requirements.txt al contenedor
+COPY requirements.txt .
+
+# Instalar las dependencias
+RUN pip install --no-cache-dir -r requirements.txt
+
 # Crea una carpeta /app y establécela como el directorio de trabajo
 RUN mkdir /app
 WORKDIR /app

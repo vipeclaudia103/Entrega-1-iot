@@ -1,8 +1,8 @@
-import json
+import uuid
 import random
 import threading
 import time
-import os
+from elasticsearch import Elasticsearch
 
 def generate_casa_data():
     # Generar datos ficticios para una casa
@@ -16,9 +16,9 @@ def generate_casa_data():
             "price_usd": random.randint(100000, 1000000)
         }
     }
-    return json.dumps(data)
+    return data
 
-def generate_ciudad_data():
+def generate_ciudad_data(ciudades, poblacion_minima, poblacion_maxima):
     # Generar datos ficticios para una ciudad
     data = {
         "timestamp": int(time.time()),
@@ -28,30 +28,70 @@ def generate_ciudad_data():
             "country": "España"
         }
     }
-    return json.dumps(data)
+    return data
 
 def generate_and_write_data():
     global espera
     t = threading.Timer(espera, generate_and_write_data)
     t.start()
     
-    # Crear el directorio de datos si no existe
-    data_folder = "/home/cvp/repos/Entrega-1-iot/data"
-    if not os.path.exists(data_folder):
-        os.makedirs(data_folder)
-        
-    # Escribir los datos en el archivo casas.json
-    with open(os.path.join(data_folder, "casas_data.json"), "a") as file:
-        datos = generate_casa_data() +"\n"
-        print(datos)
-        file.write(datos)
-    # Escribir los datos en el archivo city_data.json
-    with open(os.path.join(data_folder, "ciudades_data.json"), "a") as file:
-        data = generate_ciudad_data()
-        print(data)
-        file.write(data + '\n')
+    # Conectar con Elasticsearch (asegúrate de que Elasticsearch está en funcionamiento)
+    es = Elasticsearch(['http://localhost:9200'])
 
+    # Crear el índice casas si no existe
+    index_name_casas = "casas"
+    mapping_casas = {
+        "mappings": {
+            "properties": {
+                "timestamp": {"type": "date"},
+                "house": {
+                    "properties": {
+                        "rooms": {"type": "integer"},
+                        "bathrooms": {"type": "integer"},
+                        "size_sqft": {"type": "integer"},
+                        "year_built": {"type": "integer"},
+                        "price_usd": {"type": "integer"}
+                    }
+                }
+            }
+        }
+    }
+    if not es.indices.exists(index=index_name_casas):
+        es.indices.create(index=index_name_casas, body=mapping_casas)
 
+    # Crear el índice ciudades si no existe
+    index_name_ciudades = "ciudades"
+    mapping_ciudades = {
+        "mappings": {
+            "properties": {
+                "timestamp": {"type": "date"},
+                "city": {
+                    "properties": {
+                        "name": {"type": "keyword"},
+                        "population": {"type": "integer"},
+                        "country": {"type": "keyword"}
+                    }
+                }
+            }
+        }
+    }
+    if not es.indices.exists(index=index_name_ciudades):
+        es.indices.create(index=index_name_ciudades, body=mapping_ciudades)
+
+    # Generar y enviar datos a Elasticsearch
+    casa_data = generate_casa_data()
+    ciudad_data = generate_ciudad_data(ciudades, poblacion_minima, poblacion_maxima)
+
+    # Asignar IDs únicos a los documentos
+    casa_id = str(uuid.uuid4())
+    ciudad_id = str(uuid.uuid4())
+
+    print(casa_data)
+    print(ciudad_data)
+    # Indexar los datos con los IDs únicos
+    es.index(index=index_name_casas, id=casa_id, body=casa_data)
+    es.index(index=index_name_ciudades, id=ciudad_id, body=ciudad_data)
+    print("Datos enviados a Elasticsearch")
 
 espera = 5
 ciudades = [
