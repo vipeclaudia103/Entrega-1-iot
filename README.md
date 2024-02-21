@@ -6,9 +6,9 @@ Repositorio para la entrega de la primera práctica en la asignatura de Desarrol
 
 - Explicación de los pasos seguidos:
     1. Elegir las versiones de Elasticsearch y Filebeat.
-    2. Crear el archivo docker-compose con Elasticsearch, Filebeat y Python.
+    2. Crear el archivo docker-compose con Elasticsearch, Filebeat. Crear un dockerfile para crear la imagen de Python y ejecutar el archivo.
     3. Ejecutar docker-compose y descargar las imágenes.
-    4. Programar el código para generar los datos y crear la carpeta donde se almacenarán los archivos JSON.
+    4. Programar el código para generar los datos y crear la carpeta 'data' donde se almacenarán los archivos JSON.
     5. Crear el archivo filebeat.yml con las configuraciones adecuadas.
 
 - Instrucciones de uso:
@@ -25,7 +25,7 @@ Repositorio para la entrega de la primera práctica en la asignatura de Desarrol
         - http://localhost:9200/casas/_search
         - http://localhost:9200/ciudades/_search
 
-    ** En el caso de que los índices no se generen por medio del Filebeat, ejecutar el script de 'generador_datos_indices.py', ya que este genera tanto los datos, como crea los índices y envía los datos. Para comprobar su funcionamiento realizar los mismos pasos. 
+    ** En el caso de que los índices no se generen por medio del Filebeat y no encontrar errores en los logs, ejecutar el script de 'generador_datos_indices.py', ya que este genera tanto los datos, como crea los índices y envía los datos. Para comprobar su funcionamiento realizar los mismos pasos. 
     
 - Posibles vías de mejora:
     - Solucionar la incidencia generada por TLS en la conexión entre Elasticsearch y Filebeat.
@@ -35,6 +35,7 @@ Repositorio para la entrega de la primera práctica en la asignatura de Desarrol
     - Dificultad al crear los índices mediante el archivo filebeat.yml.
         - ** Solución: Realizar el envío desde Python mediante una librería de Elasticsearch.
     - Dificultad en la comprensión de los comandos.
+        - ** Solución: consultar API y ejecutar comandos.
 
 - Alternativas posibles:
     - En lugar de utilizar Python como generador de datos, emplear una API REST desde la cual se tomen los datos.
